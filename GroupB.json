@@ -1,0 +1,96 @@
+{
+    "AWSTemplateFormatVersion": "2010-09-09",
+    "Description": "GroupBTemplate",
+    "Metadata": {
+
+    },
+    "Parameters": {
+
+    },
+    "Mappings": {
+
+    },
+    "Conditions": {
+
+    },
+    "Resources": {
+      "GroupBvpc": {
+        "Type": "AWS::EC2::VPC",
+        "Properties": {
+          "CidrBlock": "10.172.0.0/16",
+          "Tags": [{ "Key": "Name", "Value":  "GroupBvpc" }]
+        }
+      },
+      "GroupBigw": {
+        "Type": "AWS::EC2::InternetGateway",
+        "Properties": {
+          "Tags": [{ "Key": "Name", "Value":  "GroupBigw" }]
+        }
+      },
+      "AttachGateway": {
+        "Type": "AWS::EC2::VPCGatewayAttachment",
+        "Properties": {
+          "VpcId": { "Ref": "GroupBvpc" },
+          "InternetGatewayId": { "Ref": "GroupBigw" }
+        }
+      },
+      "GroupBpubSN": {
+        "Type": "AWS::EC2::Subnet",
+        "Properties": {
+          "AvailabilityZone": "us-west-2a",
+          "VpcId": { "Ref": "GroupBvpc" },
+          "CidrBlock": "10.172.1.0/24",
+          "Tags": [{ "Key": "Name", "Value":  "GroupBpubSN" }]
+        }
+      },
+      "GroupBpubRouteT": {
+        "Type": "AWS::EC2::RouteTable",
+        "Properties": {
+          "VpcId": { "Ref": "GroupBvpc" },
+          "Tags": [{ "Key": "Name", "Value":  "GroupBpubRouteT" }]
+        }
+      },
+      "GroupBrouteIgw": {
+        "Type": "AWS::EC2::Route",
+        "Properties": {
+          "RouteTableId": { "Ref": "GroupBpubRouteT" },
+          "DestinationCidrBlock": "0.0.0.0/0",
+          "GatewayId": { "Ref": "GroupBigw" }
+        }
+      },
+      "GroupBpubRouteTableAssoc": {
+        "Type": "AWS::EC2::SubnetRouteTableAssociation",
+        "Properties": {
+          "SubnetId": { "Ref": "GroupBpubSN" },
+          "RouteTableId": { "Ref": "GroupBpubRouteT" }
+        }
+      },
+      "GroupBpriSN": {
+        "Type": "AWS::EC2::Subnet",
+        "Properties": {
+          "AvailabilityZone": "us-west-2b",
+          "VpcId": { "Ref": "GroupBvpc" },
+          "CidrBlock": "10.172.2.0/24",
+          "Tags": [{ "Key": "Name", "Value":  "GroupBpriSN" }]
+        }
+      },
+      "GroupBpriRouteT": {
+        "Type": "AWS::EC2::RouteTable",
+        "Properties": {
+          "VpcId": { "Ref": "GroupBvpc" },
+          "Tags": [{ "Key": "Name", "Value":  "GroupBpriRouteT" }]
+        }
+      },
+      "GroupBpriRouteTableAssoc": {
+        "Type": "AWS::EC2::SubnetRouteTableAssociation",
+        "Properties": {
+          "SubnetId": { "Ref": "GroupBpriSN" },
+          "RouteTableId": { "Ref": "GroupBpriRouteT" }
+        }
+      }
+
+    },
+    "Outputs": {
+
+    }
+}
